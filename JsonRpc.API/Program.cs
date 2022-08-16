@@ -1,4 +1,7 @@
+using API.Middleware;
 using JsonRpc.Core.Commands;
+using JsonRpc.Core.DataProviders;
+using JsonRpc.Core.Interfaces;
 using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +15,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHttpClient<IOilPriceProvider, OilPriceProvider>();
+
 var app = builder.Build();
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

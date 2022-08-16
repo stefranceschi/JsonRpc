@@ -1,5 +1,6 @@
 using AutoMapper;
 using JsonRpc.Core.DTOs;
+using JsonRpc.Core.Model;
 
 namespace JsonRpc.Core.MappingProfiles
 {
@@ -8,6 +9,9 @@ namespace JsonRpc.Core.MappingProfiles
         public MappingProfiles()
         {
             CreateMap<GenericJsonRpcRequest, GetOilPriceTrendRequest>();
+            
+            CreateMap<OilPrice, OilPriceDto>()
+                .ForMember(dest => dest.DateISO8601, opt => opt.MapFrom(src => src.Date.ToString("yyyy-MM-dd")));
         }
     }
 }

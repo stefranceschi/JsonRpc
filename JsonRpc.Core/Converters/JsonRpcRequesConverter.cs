@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using JsonRpc.Core.DTOs;
 using JsonRpc.Core.Enums;
+using JsonRpc.Core.Errors;
 
 namespace JsonRpc.Core.Converters
 {
@@ -25,20 +26,17 @@ namespace JsonRpc.Core.Converters
                 {
                     case JsonRpcMethodTypes.GetOilPriceTrend:
                         {
-
-                            var paramsElement = jsonDocument.RootElement.GetProperty("params");
-                            var deserializedParams = paramsElement.Deserialize<GetOilPriceTrendParams>(options);
                             request = new GetOilPriceTrendRequest
                             {
                                 Id = idValue,
                                 Jsonrpc = jsonrpcValue,
                                 Method = methodValue,
-                                Params = deserializedParams
+                                Params = GetOilPriceTrendParamsValue(jsonDocument, options)
                             };
                             break;
                         }
                     default:
-                        throw new NotImplementedException(string.Format("{methodValue} not implemented"));
+                        throw new RestException(System.Net.HttpStatusCode.NotImplemented, new { JsonRpcMethod = $"{methodValue} not implemented" });
                 }
             }
             else throw new ArgumentException("Missing method", "method");
@@ -51,9 +49,20 @@ namespace JsonRpc.Core.Converters
             throw new NotImplementedException();
         }
 
-        private void SetGetOilPriceTrendParams(JsonElement jsonElement, GenericJsonRpcRequest genericRequest)
+        private GetOilPriceTrendParams GetOilPriceTrendParamsValue(JsonDocument jsonDocument, JsonSerializerOptions options)
         {
-
+            GetOilPriceTrendParams retVal = null;
+            try
+            {
+                var paramsElement = jsonDocument.RootElement.GetProperty("params");
+                var deserializedParams = paramsElement.Deserialize<GetOilPriceTrendParams>(options);
+                retVal = deserializedParams;
+            }
+            catch (Exception)
+            {
+                throw new RestException(System.Net.HttpStatusCode.BadRequest, new { Params = "Not valid" });
+            }
+            return retVal;
         }
     }
 }
