@@ -1,6 +1,11 @@
+using JsonRpc.Core.Commands;
+using MediatR;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMediatR(typeof(GetOilPriceTrend.Handler).Assembly);
+builder.Services.AddAutoMapper(typeof(GetOilPriceTrend.Handler));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
