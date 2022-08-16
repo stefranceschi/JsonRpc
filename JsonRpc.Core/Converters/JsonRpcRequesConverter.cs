@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AutoMapper;
@@ -15,9 +16,8 @@ namespace JsonRpc.Core.Converters
         {
             JsonDocument jsonDocument = JsonDocument.ParseValue(ref reader);
             GenericJsonRpcRequest request;
-            JsonElement jsonElement;
-            var hasMethodProperty = jsonDocument.RootElement.TryGetProperty("method", out jsonElement);
-            if (hasMethodProperty)
+            var isValid = IsValidJsonRpcRequest(jsonDocument);
+            if (isValid)
             {
                 var idValue = jsonDocument.RootElement.GetProperty("id").GetInt32();
                 var jsonrpcValue = jsonDocument.RootElement.GetProperty("jsonrpc").GetString();
@@ -36,10 +36,10 @@ namespace JsonRpc.Core.Converters
                             break;
                         }
                     default:
-                        throw new RestException(System.Net.HttpStatusCode.NotImplemented, new { JsonRpcMethod = $"{methodValue} not implemented" });
+                        throw new RestException(HttpStatusCode.NotImplemented, new { JsonRpcMethod = $"{methodValue} not implemented" });
                 }
             }
-            else throw new ArgumentException("Missing method", "method");
+            else throw new RestException(HttpStatusCode.BadRequest, new { JsonRpcRequest = $"Not valid" });
 
             return request;
         }
@@ -47,6 +47,23 @@ namespace JsonRpc.Core.Converters
         public override void Write(Utf8JsonWriter writer, GenericJsonRpcRequest value, JsonSerializerOptions options)
         {
             throw new NotImplementedException();
+        }
+
+        private bool IsValidJsonRpcRequest(JsonDocument jsonDocument)
+        {
+            var hasMethodProperty = jsonDocument.RootElement.TryGetProperty("id", out var _);
+            if (!hasMethodProperty)
+                return false;
+
+            var hasIdProperty = jsonDocument.RootElement.TryGetProperty("id", out var _);
+            if (!hasIdProperty)
+                return false;
+
+            var hasJsonRpcProperty = jsonDocument.RootElement.TryGetProperty("jsonrpc", out var _);
+            if (!hasJsonRpcProperty)
+                return false;
+
+            return true;
         }
 
         private GetOilPriceTrendParams GetOilPriceTrendParamsValue(JsonDocument jsonDocument, JsonSerializerOptions options)

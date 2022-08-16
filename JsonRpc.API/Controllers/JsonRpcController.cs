@@ -15,9 +15,7 @@ namespace JsonRpc.API.Controllers
             switch (jsonRpcRequest.Method)
             {
                 case JsonRpcMethodTypes.GetOilPriceTrend:
-                    {
-                        response = await Mediator.Send(new GetOilPriceTrend.Command { JsonRpcRequest = jsonRpcRequest });
-                    }
+                    response = await Mediator.Send(new GetOilPriceTrend.Command { JsonRpcRequest = jsonRpcRequest });
                     break;
                 default:
                     throw new RestException(System.Net.HttpStatusCode.NotImplemented, new { JsonRpcMethod = $"{jsonRpcRequest.Method} not implemented" });

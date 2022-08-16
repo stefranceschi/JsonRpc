@@ -8,6 +8,7 @@ namespace JsonRpc.Core.MappingProfiles
     {
         public MappingProfiles()
         {
+            CreateMap<GenericJsonRpcRequest, GenericJsonRpcResponse>();
             CreateMap<GenericJsonRpcRequest, GetOilPriceTrendRequest>();
             
             CreateMap<OilPrice, OilPriceDto>()
