@@ -33,9 +33,12 @@ namespace JsonRpc.Core.Commands
                 if (castedRequest != null)
                 {
                     var requestParams = castedRequest.Params;
-                    var prices = await _priceProvider.GetOilPrices(requestParams.StartDateISO8601, requestParams.EndDateISO8601);
-                    var result = new GetOilPriceTrendResults { Prices = prices };
-                    response.Result = result;
+                    if (requestParams.StartDateISO8601.HasValue && requestParams.EndDateISO8601.HasValue)
+                    {
+                        var prices = await _priceProvider.GetOilPrices(requestParams.StartDateISO8601.Value, requestParams.EndDateISO8601.Value);
+                        var result = new GetOilPriceTrendResults { Prices = prices };
+                        response.Result = result;
+                    }
                 }
                 else throw new RestException(System.Net.HttpStatusCode.BadRequest, new { Request = "Not valid" });
 

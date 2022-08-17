@@ -73,7 +73,10 @@ namespace JsonRpc.Core.Converters
             {
                 var paramsElement = jsonDocument.RootElement.GetProperty("params");
                 var deserializedParams = paramsElement.Deserialize<GetOilPriceTrendParams>(options);
-                retVal = deserializedParams;
+
+                if (deserializedParams.StartDateISO8601.HasValue && deserializedParams.EndDateISO8601.HasValue)
+                    retVal = deserializedParams;
+                else throw new Exception();
             }
             catch (Exception)
             {
