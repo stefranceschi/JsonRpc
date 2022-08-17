@@ -97,10 +97,7 @@ namespace JsonRpc.Tests
                         ""id"": 1,
                         ""jsonrpc"": ""2.0"",
                         ""method"": ""GetOilPriceTrend"",
-                        ""params"": {
-                        ""startDateISO8601"": ""2020-01-01"",
-                        ""endDateISO8601"": ""2020-01-05""
-                        }
+                        ""params"": {}
                         }";
 
             Assert.ThrowsException<RestException>(() => JsonSerializer.Deserialize<GenericJsonRpcRequest>(json, serializeOptions));
